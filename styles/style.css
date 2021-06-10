@@ -1,0 +1,25 @@
+body {
+	margin: 0;
+	font-family: monospace;
+}
+canvas {
+	display: block;
+	width: 100vw;
+	height: 100vh;
+	position: fixed;
+	z-index: -1;
+}
+.roundbox {
+	position: absolute;
+	width: 33vw;
+	left: 33%;
+	border-radius: 10px;
+	background-color : hsla(0, 0%, 100%, .75);
+}
+#title {
+	font-size: 1.25em;
+	color: black;
+	text-align: center;
+	padding: 3px;
+	margin: 3px;
+}
