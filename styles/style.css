@@ -14,7 +14,7 @@ canvas {
 	width: 33vw;
 	left: 33%;
 	border-radius: 10px;
-	background-color : hsla(0, 0%, 100%, .75);
+	background-color : hsla(0, 0%, 90%, .75);
 }
 #title {
 	font-size: 1.25em;

@@ -2,7 +2,7 @@
  * Shader para el modelo de Blinn–Phong
  * David Genaro Lechuga Bernal
  * dlechuga@ciencias.unam.mx
- * https://github.com/dlechuga
+ * https://github.com/dlechuga/cook-torrance
  */
 // Vertex shader para Blinn–Phong *********************************************
 const vertexShader = `#version 300 es

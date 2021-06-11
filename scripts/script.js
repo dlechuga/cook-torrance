@@ -2,21 +2,21 @@
  * Modelo de reflectancia de Cook-Torrance
  * David Genaro Lechuga Bernal
  * dlechuga@ciencias.unam.mx
- * https://github.com/dlechuga
+ * https://github.com/dlechuga/cook-torrance
  */
 // Biblioteca auxiliar para simplificar las llamadas a WebGL
-// import chroma from './chroma.min.js';
 import * as twgl from './twgl-full.module.js';
-import * as bp from './blinn-phong-shaders.js';
-import * as ct from './cook-torrance-shaders.js';
+twgl.setDefaults({attribPrefix: "a_"});
 // Modulo para operaciones con matrices
 const m4 = twgl.m4;
-twgl.setDefaults({attribPrefix: "a_"});
+// Shaders
+import * as bp from './blinn-phong-shaders.js';
+import * as ct from './cook-torrance-shaders.js';
 // Creación de contexto para WebGL 2.0
 const gl = document.querySelector("#c").getContext("webgl2");
 // Compila shaders
-const programInfoBP = twgl.createProgramInfo(gl, [bp.vertexShader, bp.fragmentShader]);		// Blinn–Phong
-const programInfoCT = twgl.createProgramInfo(gl, [ct.vertexShader, ct.fragmentShader]);		// Cook-Torrance
+const programInfoBP = twgl.createProgramInfo(gl, [bp.vertexShader, bp.fragmentShader]);	// Blinn–Phong
+const programInfoCT = twgl.createProgramInfo(gl, [ct.vertexShader, ct.fragmentShader]);	// Cook-Torrance
 
 /**
  * Genera un número aleatorio en un rango dado
@@ -41,7 +41,7 @@ const viewProjection = m4.identity();
 const lightWorldPosition = [-10, 10, 0];
 const lightColor = [1, 1, 1, 1];
 const ambientColor = [1, 1, 1, 1];
-const ambientIntensity = 0.5;
+const ambientIntensity = 0.66;
 // Color base de las figuras
 const baseHue = rand(0, 360);
 // Textura de 2x2 pixeles
@@ -74,7 +74,7 @@ const drawObjects = [];
 // Configuración genérica de todas las figuras
 for (let ii = 0; ii < shapes.length; ++ii) {
 	const uniforms = {
-		// Material
+		// Color
 		u_matColor: chroma.hsv(0, 0, 0.8).gl(),
 		u_texture: tex,
 		// Cook-Torrance
@@ -158,6 +158,6 @@ function render(time) {
 // Llamadas a WebGL para ejecutar el render
 twgl.drawObjectList(gl, drawObjects);
 // Llamada recursiva para que el navegador dibuje constantemente
-// requestAnimationFrame(render);
+requestAnimationFrame(render);
 }
 requestAnimationFrame(render);

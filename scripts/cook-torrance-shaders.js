@@ -2,7 +2,7 @@
  * Shader para el modelo de reflectancia de Cook-Torrance
  * David Genaro Lechuga Bernal
  * dlechuga@ciencias.unam.mx
- * https://github.com/dlechuga
+ * https://github.com/dlechuga/cook-torrance
  */
 // Vectex shader for Cook-Torrance ********************************************
 const vertexShader = `#version 300 es
@@ -37,7 +37,7 @@ void main() {
 // Fragment shader for Cook-Torrance ******************************************
 const fragmentShader = `#version 300 es
 #define PI 3.14159265
-precision highp float;
+precision mediump float;
 
 uniform vec4 u_lightColor;
 uniform vec4 u_matColor;
@@ -132,7 +132,7 @@ void main() {
 	/*
 	R = s*Rs + d*Rd
 	kd = (1-ks) * (1-metallic)
-	
+	1 / 256 = 0.00390625
 	geometrically attenuated
 	attenuated = 1 / (1+d^2)
 	*/
