@@ -38,13 +38,13 @@ const camera = m4.identity();
 const view = m4.identity();
 const viewProjection = m4.identity();
 // Configuración de las fuentes de luz
-const pointLightWorldPosition = [-10, 10, 0];   // Point light
-const pointLightColor = [1, 0, 0, 1];           // Point light color
-const pointLightRadius = 20;                    // Point light radius
-const dirLightWorldPosition = [10, 10, 0];      // Directional light
-const dirLightColor = [0.6, 1, 0.6, 1];       // Directional light color
-const ambientColor = [0, 0, 1, 1];              // Ambient light color
-const ambientIntensity = 0.15;                  // Ambient light
+const pointLightWorldPosition = [20, 20, 0];	// Point light
+const pointLightColor = [1, 0, 0, 1];			// Point light color
+const pointLightRadius = 20;					// Point light radius
+const dirLightWorldPosition = [-20, 20, 0];		// Directional light
+const dirLightColor = [0.5, 1, 0.5, 1];			// Directional light color
+const ambientColor = [0.5, 0.5, 1, 1];			// Ambient light color
+const ambientIntensity = 0.10;					// Ambient light
 // Color base de las figuras
 const baseHue = rand(0, 360);
 // Textura de 2x2 pixeles
@@ -80,17 +80,13 @@ for (let ii = 0; ii < shapes.length; ++ii) {
 		// Color
 		u_matColor: chroma.hsv(0, 0, 0.8).gl(),
 		u_texture: tex,
-        u_diffuseColor: [1, 1, 1, 1],
-        u_specularColor: [1, 1, 1, 1],
 		// Blinn–Phong
-		u_diffConst: 0.7,       // Lambertian reflectance value ρ <= 1.0
-		u_specConst: 0.3,     // u_diffConst + u_diffConst <= 1.0
-		u_shininess: 200,
-        u_ambientConst: 1.0,
-        u_emissiveConst: 0.1,
+		u_diffConst: 0.79,		// Lambertian reflectance value ρ <= 1.0
+		u_specConst: 0.19,		// u_diffConst + u_diffConst <= 1.0
+		u_shininess: 150,
 		// Cook-Torrance
-		u_roughness : 0.1,
-		u_IOR : 0.5,
+		u_roughness : 0.1,	
+		u_IOR : 2.5,		// n >= 1.0 , vacum = 1.0
 		u_Kabsor : 1.0,
 		// Luces
 		u_pointLightWorldPosition: pointLightWorldPosition,

@@ -12,7 +12,7 @@ uniform mat4 u_world;
 uniform mat4 u_camera;
 uniform mat4 u_worldViewProjection;
 uniform mat4 u_worldInverseTranspose;
-// Luces
+// Lights
 uniform vec3 u_pointLightWorldPosition;
 
 // Geometry attributes
@@ -31,7 +31,7 @@ void main() {
     vec4 worldPosition = u_world * a_position;
     
 	v_position = (u_worldViewProjection * a_position);
-	v_normal   = (u_worldInverseTranspose * vec4(a_normal, 0)).xyz;
+	v_normal   = (u_worldInverseTranspose * vec4(a_normal, 0.0)).xyz;
 	v_texCoord = a_texcoord;
     v_worldPosition  = worldPosition.xyz;
     v_surfaceToLight = u_pointLightWorldPosition - v_worldPosition;
@@ -57,7 +57,7 @@ uniform vec4 u_specular;
 uniform float u_shininess;
 uniform float u_specConst;
 
-// Luces
+// Lights
 uniform vec4 u_ambientColor;
 uniform float u_ambientIntensity;
 uniform vec3 u_dirLightWorldPosition;
@@ -75,6 +75,13 @@ in vec3 v_surfaceToView;
 
 out vec4 out_FragColor;
 
+// https://imdoingitwrong.wordpress.com/2011/01/31/light-attenuation/
+float attenuation() {
+	float dist = distance(u_pointLightWorldPosition, v_worldPosition);
+    float dr   = 1.0 + (dist / u_pointLightRadius);
+	return 1.0 / (dr * dr);
+}
+
 void main() {
 	vec3 LD = normalize(u_dirLightWorldPosition);
 	vec3 LP = normalize(v_surfaceToLight);
@@ -90,28 +97,21 @@ void main() {
 
 	vec4 matColor = texture(u_texture, v_texCoord) * u_matColor;
 
-    float dist = distance(u_pointLightWorldPosition, v_worldPosition);
-    float dr   = 1.0 + (dist / u_pointLightRadius);
-    dr *= dr;
-    // https://imdoingitwrong.wordpress.com/2011/01/31/light-attenuation/
-    float attenuation = 1.0 / dr;
-    // float attenuation = 1.0 / (dist * dist);
-    // float attenuation = 1.0 / (a + b*dist + c*dist*dist);
+    float att = attenuation();
 
     // Ambient
 	vec4 ambient  = u_ambientColor * u_ambientIntensity;
+
 	// Diffuse
 	vec4 diffuseDir   = dotNLD * u_dirLightColor;
-    vec4 diffusePoint = dotNLP * u_pointLightColor * attenuation;
-    vec4 diffuse = u_diffConst * (diffuseDir + diffusePoint);
-	//Specular
-    // Foley Van Dam pag 361, 721
-	// float spec = u_specConst * (8.0 + u_shininess) / (8 * PI) * pow(dotNH, u_shininess);
-    // float spec = (dotNL > 0.0) ? pow( dotNH , u_shininess) : 0.0;
-    
-    vec4 specularDir   = u_dirLightColor * (pow(dotNHD, u_shininess) * (8.0 + u_shininess) / (8.0 * PI));
-    vec4 specularPoint = u_dirLightColor * attenuation * (pow(dotNHP, u_shininess) * (8.0 + u_shininess) / (8.0 * PI));
-    vec4 specular = u_specConst * (specularDir + specularPoint);
+    vec4 diffusePoint = dotNLP * u_pointLightColor * att;
+    vec4 diffuse = (u_diffConst / PI) * (diffuseDir + diffusePoint);
+
+	//Specular Foley Van Dam pags 361, 721
+    vec4 specularDir   = u_dirLightColor   * pow(dotNHD, u_shininess);
+    vec4 specularPoint = u_pointLightColor * pow(dotNHP, u_shininess) * att;
+	float spec    = u_specConst * (8.0 + u_shininess) / (8.0 * PI);
+    vec4 specular = spec * (specularDir + specularPoint);
     
 
 	// Color final
