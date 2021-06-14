@@ -10,7 +10,7 @@ const vertexShader = `#version 300 es
 uniform mat4 u_worldViewProjection;
 uniform vec3 u_lightWorldPos;
 uniform mat4 u_world;
-uniform mat4 u_viewInverse;
+uniform mat4 u_camera;
 uniform mat4 u_worldInverseTranspose;
 
 in vec4 a_position;
@@ -28,7 +28,7 @@ void main() {
 	v_texCoord = a_texcoord;
 	v_normal   = (u_worldInverseTranspose * vec4(a_normal, 0)).xyz;
 	v_surfaceToLight = u_lightWorldPos - (u_world * a_position).xyz;
-	v_surfaceToView  = (u_viewInverse[3] - (u_world * a_position)).xyz;
+	v_surfaceToView  = (u_camera[3] - (u_world * a_position)).xyz;
 	// Vertex final
 	gl_Position = v_position;
 }
@@ -49,7 +49,7 @@ uniform float u_specularFactor;
 uniform vec4  u_ambientColor;
 uniform float u_ambientIntensity;
 
-uniform float u_diffConst;
+uniform float u_diffConst;      // Lambertian reflectance value ρ
 uniform float u_roughness;
 uniform float u_IOR;
 uniform float u_Kabsor;
@@ -125,7 +125,8 @@ void main() {
 
 	// vec4 diffuse  = (1.0 - Rs);
 	// vec4 diffuse  = s * kd;
-	float diffuse  = u_diffConst / PI;
+	// Lambertian scattering
+    float diffuse  = u_diffConst / PI;
 	
 	vec4 ambient   = matColor * u_ambientColor * u_ambientIntensity;
 

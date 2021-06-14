@@ -1,5 +1,5 @@
 /**
- * Modelo de reflectancia de Cook-Torrance
+ * Modelo de reflectancia de Cook-Torrance y Blinn–Phong
  * David Genaro Lechuga Bernal
  * dlechuga@ciencias.unam.mx
  * https://github.com/dlechuga/cook-torrance
@@ -33,15 +33,18 @@ const zFar  = 100
 const eye    = [0, 10, 10];
 const target = [0, 0, 0];
 const up     = [0, 1, 0];
-// Matrices para la cámara
+// Matrices compartidas para la cámara en la escena
 const camera = m4.identity();
 const view = m4.identity();
 const viewProjection = m4.identity();
 // Configuración de las fuentes de luz
-const lightWorldPosition = [-10, 10, 0];
-const lightColor = [1, 1, 1, 1];
-const ambientColor = [1, 1, 1, 1];
-const ambientIntensity = 0.66;
+const pointLightWorldPosition = [-10, 10, 0];   // Point light
+const pointLightColor = [1, 0, 0, 1];           // Point light color
+const pointLightRadius = 20;                    // Point light radius
+const dirLightWorldPosition = [10, 10, 0];      // Directional light
+const dirLightColor = [0.6, 1, 0.6, 1];       // Directional light color
+const ambientColor = [0, 0, 1, 1];              // Ambient light color
+const ambientIntensity = 0.15;                  // Ambient light
 // Color base de las figuras
 const baseHue = rand(0, 360);
 // Textura de 2x2 pixeles
@@ -60,7 +63,7 @@ const tex = twgl.createTexture(gl, {
 const shapes = [
 	// Plano fijo
 	twgl.primitives.createPlaneBufferInfo(gl, 25, 25),
-	// Figuras
+	// Figuras geométricas
 	twgl.primitives.createCylinderBufferInfo(gl, 1, 2, 24, 2), 
 	twgl.primitives.createCresentBufferInfo(gl, 1.5, 1.0, 0.15, 0.25, 24), 
 	twgl.primitives.createTruncatedConeBufferInfo(gl, 1.5, .5, 1.5, 32, 1), 
@@ -77,28 +80,35 @@ for (let ii = 0; ii < shapes.length; ++ii) {
 		// Color
 		u_matColor: chroma.hsv(0, 0, 0.8).gl(),
 		u_texture: tex,
+        u_diffuseColor: [1, 1, 1, 1],
+        u_specularColor: [1, 1, 1, 1],
+		// Blinn–Phong
+		u_diffConst: 0.7,       // Lambertian reflectance value ρ <= 1.0
+		u_specConst: 0.3,     // u_diffConst + u_diffConst <= 1.0
+		u_shininess: 200,
+        u_ambientConst: 1.0,
+        u_emissiveConst: 0.1,
 		// Cook-Torrance
-		u_diffConst : 1.5,
 		u_roughness : 0.1,
 		u_IOR : 0.5,
 		u_Kabsor : 1.0,
-		// Blinn–Phong
-		u_specular: [1, 1, 1, 1],
-		u_shininess: 250,
-		u_specularFactor: 1.5,
 		// Luces
-		u_lightWorldPos: lightWorldPosition,
-		u_lightColor: lightColor,
+		u_pointLightWorldPosition: pointLightWorldPosition,
+		u_pointLightColor: pointLightColor,
+        u_pointLightRadius: pointLightRadius,
+        u_dirLightWorldPosition: dirLightWorldPosition,
+        u_dirLightColor: dirLightColor,
 		u_ambientColor : ambientColor,
 		u_ambientIntensity : ambientIntensity,
 		// Transformaciones
-		u_viewInverse: camera,
 		u_world: m4.identity(),
-		u_worldInverseTranspose: m4.identity(),
+		u_camera: camera,
 		u_worldViewProjection: m4.identity(),
+		u_worldInverseTranspose: m4.identity(),
 	};
 	drawObjects.push({
 		programInfo: programInfoBP,
+		// programInfo: programInfoCT,
 		bufferInfo: shapes[ii],
 		uniforms: uniforms,
 		translation: [0, 0, 0],
@@ -116,7 +126,7 @@ const cols = 3;
 for (let ii = 0; ii < rows; ++ii) {
 	for (let jj = 0; jj < cols; ++jj) {
 		const obj = drawObjects[1 + jj + (ii * cols)];
-		obj.uniforms.u_matColor = chroma.hsv((baseHue + rand(0, 90)) % 360, 0.75, 1).gl();
+		// obj.uniforms.u_matColor = chroma.hsv((baseHue + rand(0, 90)) % 360, 0.75, 1).gl();
 		obj.xSpeed = rand(-0.4, 0.4);
 		obj.ySpeed = rand(-0.4, 0.4);
 		obj.zSpeed = rand(-0.4, 0.4);
