@@ -38,13 +38,13 @@ const camera = m4.identity();
 const view = m4.identity();
 const viewProjection = m4.identity();
 // Configuración de las fuentes de luz
-const pointLightWorldPosition = [20, 20, 0];	// Point light
+const pointLightWorldPosition = [0, 10, 0];		// Point light
 const pointLightColor = [1, 0, 0, 1];			// Point light color
 const pointLightRadius = 20;					// Point light radius
-const dirLightWorldPosition = [-20, 20, 0];		// Directional light
+const dirLightWorldPosition = [-10, 10, 0];		// Directional light
 const dirLightColor = [0.5, 1, 0.5, 1];			// Directional light color
-const ambientColor = [0.5, 0.5, 1, 1];			// Ambient light color
-const ambientIntensity = 0.10;					// Ambient light
+const ambientColor = [0.3, 0.3, 1, 1];			// Ambient light color
+const ambientIntensity = 0.20;					// Ambient light
 // Color base de las figuras
 const baseHue = rand(0, 360);
 // Textura de 2x2 pixeles
@@ -81,8 +81,8 @@ for (let ii = 0; ii < shapes.length; ++ii) {
 		u_matColor: chroma.hsv(0, 0, 0.8).gl(),
 		u_texture: tex,
 		// Blinn–Phong
-		u_diffConst: 0.79,		// Lambertian reflectance value ρ <= 1.0
-		u_specConst: 0.19,		// u_diffConst + u_diffConst <= 1.0
+		u_diffConst: 0.84,		// Lambertian reflectance value ρ <= 1.0
+		u_specConst: 0.14,		// u_diffConst + u_diffConst <= 1.0
 		u_shininess: 150,
 		// Cook-Torrance
 		u_roughness : 0.1,	
@@ -122,7 +122,7 @@ const cols = 3;
 for (let ii = 0; ii < rows; ++ii) {
 	for (let jj = 0; jj < cols; ++jj) {
 		const obj = drawObjects[1 + jj + (ii * cols)];
-		// obj.uniforms.u_matColor = chroma.hsv((baseHue + rand(0, 90)) % 360, 0.75, 1).gl();
+		obj.uniforms.u_matColor = chroma.hsv((baseHue + rand(0, 90)) % 360, 0.75, 1).gl();
 		obj.xSpeed = rand(-0.4, 0.4);
 		obj.ySpeed = rand(-0.4, 0.4);
 		obj.zSpeed = rand(-0.4, 0.4);

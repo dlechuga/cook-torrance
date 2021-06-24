@@ -52,10 +52,8 @@ precision highp float;
 uniform vec4 u_matColor;
 uniform sampler2D u_texture;
 uniform float u_diffConst;
-
-uniform vec4 u_specular;
-uniform float u_shininess;
 uniform float u_specConst;
+uniform float u_shininess;
 
 // Lights
 uniform vec4 u_ambientColor;
